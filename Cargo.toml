@@ -1,0 +1,6 @@
+[package]
+name = "FourierFractal"
+version = "0.1.0"
+authors = ["Elliott Mahler <emahler@usc.edu>"]
+
+[dependencies]
