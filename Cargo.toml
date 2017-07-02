@@ -1,6 +1,9 @@
 [package]
-name = "FourierFractal"
+name = "fourier_fractal"
 version = "0.1.0"
 authors = ["Elliott Mahler <emahler@usc.edu>"]
 
 [dependencies]
+rustfft = "^2.0"
+image = "~0.14"
+cgmath = "~0.14"
