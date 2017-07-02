@@ -35,6 +35,8 @@ pub fn generate<T: FFTnum>(inital_points: &[Complex<T>], num_iterations: usize, 
     let mut planner = FFTplanner::new(false);
 
     for i in 0..num_iterations {
+        println!("Generating points: iteration={}, len={}", i + 1, points.len() * pad_size);
+
     	let len = points.len();
 
     	//allocate a destination buffer for the FFT. we're going to concatenate a bunch of zeroes afterwards
@@ -55,8 +57,6 @@ pub fn generate<T: FFTnum>(inital_points: &[Complex<T>], num_iterations: usize, 
         let final_len = points.len() - (pad_size - 1);
     	points.truncate(final_len);
     	scale(&mut points, T::one() / T::from_usize(len).unwrap());
-
-    	println!("Generating points: iteration={}, len={}", i + 1, points.len());
     }
 
     points

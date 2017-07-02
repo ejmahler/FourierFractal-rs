@@ -6,4 +6,4 @@ authors = ["Elliott Mahler <emahler@usc.edu>"]
 [dependencies]
 rustfft = "^2.0"
 image = "~0.14"
-cgmath = "~0.14"
+imageproc = "~0.9"

@@ -1,16 +1,14 @@
 
 use rustfft::num_complex::Complex;
+use rustfft::num_traits::Float;
 
-use cgmath::{Vector2, BaseNum};
-use cgmath::num_traits::Float;
-use image::{GenericImage, ImageBuffer, Rgb};
-
-use super::draw_shape;
+use image::{GenericImage, Rgb};
+use imageproc;
 
 pub fn render_fractal<ImageType, T>(target: &mut ImageType, fractal_points: &[Complex<T>])
 	where
 		ImageType: GenericImage<Pixel=Rgb<u8>>,
-		T: Float + BaseNum
+		T: Float
 {
 	let half = T::from(0.5f64).unwrap();
 
@@ -44,21 +42,19 @@ pub fn render_fractal<ImageType, T>(target: &mut ImageType, fractal_points: &[Co
 	//compute the transformation we'll apply to every point
 	let scale = T::min(scale_x, scale_y) * T::from(0.9f64).unwrap();
 
-	let translate = Vector2::new(
-		image_size_x * half - scale * fractal_center_x,
-		image_size_y * half + scale * fractal_center_y,
+	let translate = Complex{
+		re: image_size_x * half - scale * fractal_center_x,
+		im: image_size_y * half + scale * fractal_center_y,
+		};
+
+	for window in fractal_points.windows(2) {
+		let line_start = window[0].conj() * scale + translate;
+		let line_end =   window[1].conj() * scale + translate;
+
+		imageproc::drawing::draw_line_segment_mut(target, 
+			(line_start.re.to_f32().unwrap(), line_start.im.to_f32().unwrap()),
+			(line_end.re.to_f32().unwrap(), line_end.im.to_f32().unwrap()),
+			Rgb([255,255,255]),
 		);
-
-	println!("{:?}", Vector2::new(fractal_center_x, -fractal_center_y) + translate);
-
-	for (i, window) in fractal_points.windows(2).enumerate() {
-		if i % 1000000 == 0 {
-			println!("Drawing line {} of {}", i, fractal_points.len() - 1);
-		}
-
-		let line_start = Vector2::new(window[0].re, -window[0].im) * scale + translate;
-		let line_end =   Vector2::new(window[1].re, -window[1].im) * scale + translate;
-
-		draw_shape::draw_line(target, line_start, line_end);
 	}
 }
